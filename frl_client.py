@@ -151,6 +151,6 @@ class FlowerClient(fl.client.NumPyClient):
 
 client = FlowerClient()
 
-fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=client)
+fl.client.start_numpy_client(server_address=train_config['settings']['flwrServerIP'], client=client)
 
 client.env.close()

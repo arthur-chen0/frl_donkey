@@ -14,9 +14,9 @@ def create_strategy() -> fl.server.strategy:
         strategy = fl.server.strategy.FedAvg(
             fraction_fit=0.5,
             fraction_evaluate=0.5,
-            min_fit_clients=2,
-            min_evaluate_clients=2,
-            min_available_clients=2)
+            min_fit_clients=train_config['settings']['clients'],
+            min_evaluate_clients=train_config['settings']['clients'],
+            min_available_clients=train_config['settings']['clients'])
     
     elif "FedProx" in strategy_name:
         print("Server Strategy: FedProx")
@@ -24,15 +24,15 @@ def create_strategy() -> fl.server.strategy:
             fraction_fit=0.5,
             fraction_evaluate=0.5,
             proximal_mu=0.3,
-            min_fit_clients=2,
-            min_evaluate_clients=2,
-            min_available_clients=2)
+            min_fit_clients=train_config['settings']['clients'],
+            min_evaluate_clients=train_config['settings']['clients'],
+            min_available_clients=train_config['settings']['clients'])
     
     if "dp" in strategy_name:
         print("Server Strategy with defferential privacy")
         return fl.server.strategy.DPFedAvgFixed(
             strategy, 
-            num_sampled_clients = 2, 
+            num_sampled_clients = train_config['settings']['clients'], 
             clip_norm = 0.001, 
             noise_multiplier = 0.001, 
             server_side_noising = True)
