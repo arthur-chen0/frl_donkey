@@ -35,8 +35,11 @@ elif platform.system() == "Linux":
 port = 9090 + int(args.id) * 2
 
 dt = datetime.datetime.now().strftime('%Y-%m-%dT%H-%M')
-logdir = dt + "_" + train_config['settings']['rlAlgo'] + "_" + train_config['settings']['aggregationFn'] + "_" + train_config['settings']['policy'] + "_env" + train_config["settings"]["env"] + "_r" + train_config["settings"]["timesteps"] + "_f" + train_config["settings"]["rounds"] + "_noeval" + "/client_"  + args.id
-
+if args.env is not None:
+    logdir = dt + "_" + train_config['settings']['rlAlgo'] + "_" + train_config['settings']['aggregationFn'] + "_" + train_config['settings']['policy'] + "_r" + train_config["settings"]["timesteps"] + "_f" + train_config["settings"]["rounds"] + "_noeval" + "/client_"  + args.id
+else:
+    logdir = dt + "_" + train_config['settings']['rlAlgo'] + "_" + train_config['settings']['aggregationFn'] + "_" + train_config['settings']['policy'] + "_env" + train_config["settings"]["env"] + "_r" + train_config["settings"]["timesteps"] + "_f" + train_config["settings"]["rounds"] + "_noeval" + "/client_"  + args.id
+print("logdir is ", logdir)
 
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self):
@@ -66,7 +69,7 @@ class FlowerClient(fl.client.NumPyClient):
         if args.env is not None:
             print("arg is not none, env: ", args.env)
             envName = env_list[int(args.env)]
-            
+        
         self.env = gym.make(envName, conf=self.conf)
         self.env.viewer.handler.send_load_scene(envName)
 
@@ -102,6 +105,7 @@ class FlowerClient(fl.client.NumPyClient):
 
         print("done training... mean reward: ", mean_reward, "std: ", std_reward)
         print("parameters: ", parameters[0])
+        self.model.save(logdir + "_ppo_donkey")
         # self.env.close()
         
         return self.get_parameters(config={}), int(train_config['settings']['timesteps']), {}
