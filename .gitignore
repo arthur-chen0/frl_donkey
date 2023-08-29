@@ -1,2 +1,4 @@
 2023*/
 unitylog.txt
+*.zip
+__pycache__/
