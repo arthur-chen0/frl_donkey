@@ -26,7 +26,7 @@ pip install git+https://github.com/arthur-chen0/gym-donkeycar.git
 | exe_path_mac | The path of your donkey car simulator installed on Mac system |
 | host | The federated learning server address | 127.0.0.1 |
 | rlAlgo | The algorithm your reinforcement learning using | PPO, TQC |
-| aggregationFn | The aggregation function of federated learning <br> - Add dp prefix if you want to use Differential privacy | FedAvg, FedProx, dpFedAvg, dpFedProx |
+| aggregationFn | The aggregation function of federated learning | FedAvg, FedProx |
 | dp | Use the fixed or adaptive clipping. Set it to 'none' if you do not need differential privacy | dp_fixed_clipping, dp_adaptive_clipping |
 | policy | The neural network used in reinforcement learning | Cnn, Mlp |
 | env | environment number | 0-3 |
