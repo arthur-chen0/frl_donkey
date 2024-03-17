@@ -4,7 +4,7 @@
 
 - Install Flower federated learning:
 ``` shell
-pip install flwr
+pip install flwr-nightly
 ```
 - Install stable-baselines3:
 ``` shell
@@ -14,7 +14,7 @@ pip install stable-baselines3[extra]
 - Download simulator binaries: https://github.com/tawnkramer/gym-donkeycar/releases
 - Install master version of gym donkey car:
 ``` shell
-pip install git+https://github.com/tawnkramer/gym-donkeycar
+pip install git+https://github.com/arthur-chen0/gym-donkeycar.git
 ```
 ## Usage
 
@@ -24,8 +24,10 @@ pip install git+https://github.com/tawnkramer/gym-donkeycar
 | ------ | ------ | ------ |
 | exe_path_linux | The path of your donkey car simulator installed on Linux system |
 | exe_path_mac | The path of your donkey car simulator installed on Mac system |
-| rlAlgo | The algorithm your reinforcement learning using | PPO |
+| host | The federated learning server address | 127.0.0.1 |
+| rlAlgo | The algorithm your reinforcement learning using | PPO, TQC |
 | aggregationFn | The aggregation function of federated learning <br> - Add dp prefix if you want to use Differential privacy | FedAvg, FedProx, dpFedAvg, dpFedProx |
+| dp | Use the fixed or adaptive clipping. Set it to 'none' if you do not need differential privacy | dp_fixed_clipping, dp_adaptive_clipping |
 | policy | The neural network used in reinforcement learning | Cnn, Mlp |
 | env | environment number | 0-3 |
 | rounds | The number of federated learning rounds | A number you want |
