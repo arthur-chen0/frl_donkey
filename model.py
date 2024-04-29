@@ -6,6 +6,7 @@ import platform
 import datetime
 
 from stable_baselines3 import PPO
+from sb3_contrib import TQC
 
 train_config = configparser.ConfigParser()
 train_config.read('config.ini')
@@ -22,18 +23,30 @@ elif platform.system() == "Linux":
 
 class DonkeyModel:
 
-    def __init__(self, envNum=None, carID=0):
+    def __init__(self, argEnvNum=None, carID=0):
+
+        rlAlgo = train_config['RlSettings']['rlAlgo']
+        aggregationFn = train_config['FlSettings']['aggregationFn']
+        policy = train_config['RlSettings']['policy']
+        timesteps = train_config["RlSettings"]["timesteps"]
+        rounds = train_config["FlSettings"]["rounds"]
+        env_num = train_config["RlSettings"]["env"]
+        dp = train_config["FlSettings"]['dp']
+
+        date = datetime.datetime.now().date().strftime('%Y-%m-%d')
+        time = datetime.datetime.now().strftime('%H_%M')
+
+        # self.envName = env_list[int(env_num)]
+
+        # logdir = "record/" + date + "/"
+
+        if argEnvNum is not None:
+            print("arg is not none, env: ", argEnvNum)
+            env_num = str(argEnvNum)
         
-        dt = datetime.datetime.now().strftime('%Y-%m-%dT%H-%M')
-
-        self.envName = env_list[int(train_config['RlSettings']['env'])]
-
-        if envNum is not None:
-            print("arg is not none, env: ", envNum)
-            self.envName = env_list[int(envNum)]
-            logdir = dt + "_" + train_config['RlSettings']['rlAlgo'] + "_" + train_config['FlSettings']['aggregationFn'] + "_" + train_config['RlSettings']['policy'] + "_r" + train_config["RlSettings"]["timesteps"] + "_f" + train_config["FlSettings"]["rounds"] + "_noeval" + "/client_"  + str(carID)
-        else:
-            logdir = dt + "_" + train_config['RlSettings']['rlAlgo'] + "_" + train_config['FlSettings']['aggregationFn'] + "_" + train_config['RlSettings']['policy'] + "_env" + train_config["RlSettings"]["env"] + "_r" + train_config["RlSettings"]["timesteps"] + "_f" + train_config["FlSettings"]["rounds"] + "_noeval" + "/client_"  + str(carID)
+        self.envName = env_list[int(env_num)]
+        # logdir += time + "_" + rlAlgo + "_" + dp + aggregationFn + "_" + policy + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_"  + str(carID)
+        logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_"  + str(carID)
 
         self.logdir = logdir
         self.conf = {
@@ -57,5 +70,13 @@ class DonkeyModel:
     def create(self):
         env = gym.make(self.envName, conf=self.conf)
         env.viewer.handler.send_load_scene(self.envName)
-        model = PPO("CnnPolicy", env, verbose=1, device="auto", n_steps=256, tensorboard_log=self.logdir, ent_coef=0.01)
+
+        if "PPO" in train_config["RlSettings"]["rlAlgo"]:
+            print("RL algorithm: PPO")
+            model = PPO("CnnPolicy", env, verbose=1, device="auto", n_steps=256, tensorboard_log=self.logdir, ent_coef=0.01)
+        elif "TQC" in train_config["RlSettings"]["rlAlgo"]:
+            print("RL algorithm: TQC")
+            model = TQC("CnnPolicy", env, verbose=1, device='auto', tensorboard_log=self.logdir, tau=0.02,
+                        batch_size=256, gradient_steps=256, ent_coef="auto", buffer_size=100000, train_freq=200, learning_starts=5000, learning_rate=7.3e-4,
+                        use_sde_at_warmup=True, use_sde=True, sde_sample_freq=16, policy_kwargs=dict(log_std_init=-3, net_arch=[256, 256], n_critics=2))
         return model, env

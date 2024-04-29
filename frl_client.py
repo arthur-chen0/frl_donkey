@@ -5,8 +5,6 @@ import configparser, argparse
 
 from model import DonkeyModel
 
-from stable_baselines3 import PPO, DDPG
-
 from collections import OrderedDict
 from typing import List, Tuple, Union
 
@@ -20,7 +18,7 @@ train_config.read('config.ini')
 
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self):
-        self.donkeyModel = DonkeyModel(envNum=args.env, carID=int(args.id))
+        self.donkeyModel = DonkeyModel(argEnvNum=args.env, carID=int(args.id))
         self.model, self.env = self.donkeyModel.create()
 
     def get_parameters(self, config):
@@ -81,8 +79,12 @@ class FlowerClient(fl.client.NumPyClient):
 
 
 
-client = FlowerClient()
+client = FlowerClient().to_client()
 
-fl.client.start_numpy_client(server_address=train_config['FlSettings']['flwrServerIP'], client=client)
+# flwr.client.start_numpy_client() is deprecated. Instead, use `flwr.client.start_client()`
+fl.client.start_client(
+		server_address=train_config['FlSettings']['flwrServerIP'],
+		client=client,
+	)
 
-client.env.close()
+client.numpy_client.env.close()

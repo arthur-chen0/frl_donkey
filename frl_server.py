@@ -14,6 +14,7 @@ def create_strategy() -> fl.server.strategy:
     fraction_fit = float(train_config['FlSettings']['fraction_fit'])
     fraction_evaluate = float(train_config['FlSettings']['fraction_evaluate'])
     proximal_mu = float(train_config['FlSettings']['proximal_mu'])
+    dp = train_config['FlSettings']['dp']
     clip_norm = float(train_config['FlSettings']['clip_norm'])
     noise_multiplier = float(train_config['FlSettings']['noise_multiplier'])
     
@@ -41,7 +42,7 @@ def create_strategy() -> fl.server.strategy:
     elif "FedYogi" in strategy_name:
         print("Server Strategy: FedYogi")
 
-        model, env = DonkeyModel(envNum=0).create()
+        model, env = DonkeyModel(argEnvNum=0).create()
        
         strategy = fl.server.strategy.FedYogi(
             fraction_fit=fraction_fit,
@@ -54,7 +55,7 @@ def create_strategy() -> fl.server.strategy:
 
     elif "FedAdam" in strategy_name:
         print("Server Strategy: FedAdam")
-        model, env = DonkeyModel(envNum=0).create()
+        model, env = DonkeyModel(argEnvNum=0).create()
        
         strategy = fl.server.strategy.FedAdam(
             fraction_fit=fraction_fit,
@@ -67,7 +68,7 @@ def create_strategy() -> fl.server.strategy:
     
     elif "FedAdagrad" in strategy_name:
         print("Server Strategy: FedAdagrad")
-        model, env = DonkeyModel(envNum=0).create()
+        model, env = DonkeyModel(argEnvNum=0).create()
         strategy = fl.server.strategy.FedAdagrad(
             fraction_fit=fraction_fit,
             fraction_evaluate=fraction_evaluate,
@@ -77,14 +78,21 @@ def create_strategy() -> fl.server.strategy:
             initial_parameters=ndarrays_to_parameters([val.cpu().numpy() for _, val in model.policy.state_dict().items()]))
         env.close()
     
-    if "dp" in strategy_name:
-        print("Server Strategy with defferential privacy")
-        return fl.server.strategy.DPFedAvgFixed(
+    if "dp_fixed_clipping" in dp:
+        print("Server Strategy with defferential privacy: fixed clipping")
+        return fl.server.strategy.DifferentialPrivacyServerSideFixedClipping(
             strategy, 
             num_sampled_clients = clients, 
             clip_norm = clip_norm, 
             noise_multiplier = noise_multiplier, 
             server_side_noising = True)
+    elif "dp_adaptive_clipping" in dp:
+        print("Server Strategy with defferential privacy: adaptive clipping")
+        return fl.server.strategy.DifferentialPrivacyServerSideAdaptiveClipping(
+            strategy, 
+            num_sampled_clients = clients, 
+            noise_multiplier = noise_multiplier,
+        )
     else:
         return strategy
     

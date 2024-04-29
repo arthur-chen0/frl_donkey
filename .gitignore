@@ -1,4 +1,6 @@
-2023*/
 unitylog.txt
 *.zip
 __pycache__/
+record/
+poetry.lock
+reinforcement/
