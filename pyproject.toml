@@ -6,14 +6,13 @@ authors = ["Arthurchen <arthurchen@johnsonfitness.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.0"
+python = "^3.8"
 flwr = "^1.6.0"
-gym-donkeycar = {git = "https://github.com/tawnkramer/gym-donkeycar"}
 stable-baselines3 = {extras = ["extra"], version = "^2.2.1"}
 sb3-contrib = "^2.2.1"
 flwr-nightly = "^1.8.0.dev20240315"
-rl-zoo3 = "^2.3.0"
-websockets = "^12.0"
+gym-donkeycar = {git = "https://github.com/arthur-chen0/gym-donkeycar.git"}
+optuna = "^3.6.1"
 
 
 [build-system]
