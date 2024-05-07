@@ -37,6 +37,9 @@ class DonkeyModel:
         rounds = train_config["FlSettings"]["rounds"]
         env_num = train_config["RlSettings"]["env"]
         dp = train_config["FlSettings"]['dp']
+        
+        if dp is None:
+            dp = ""
 
         date = datetime.datetime.now().date().strftime('%Y-%m-%d')
         time = datetime.datetime.now().strftime('%H_%M')
@@ -51,8 +54,7 @@ class DonkeyModel:
 
         self.envName = env_list[int(env_num)]
         # logdir += time + "_" + rlAlgo + "_" + dp + aggregationFn + "_" + policy + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_"  + str(carID)
-        logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_" + str(
-            carID)
+        logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_" + str(carID)
 
         self.logdir = logdir
         self.conf = {
@@ -68,24 +70,24 @@ class DonkeyModel:
             "guid": str(uuid.uuid4()),
             "throttle_min": float(train_config['CarSettings']['throttle_min']),
             "throttle_max": float(train_config['CarSettings']['throttle_max']),
-            # "steer_limit": 0.5,
+            "steer_limit": 0.8,
             "max_cte": float(train_config['CarSettings']['max_cte']),
         }
 
     def create(self,
                policy=train_config['RlSettings']['policy'],
-               learning_rate=train_config['RlSettings']['learning_rate'],
-               batch_size=train_config['RlSettings']['batch_size'],
-               gamma=train_config['RlSettings']['gamma'],
-               ent_coef=train_config['RlSettings']['ent_coef'],
-               clip_range=train_config['RlSettings']['clip_range'],
-               n_epochs=train_config['RlSettings']['n_epochs'],
-               gae_lambda=train_config['RlSettings']['gae_lambda'],
-               max_grad_norm=train_config['RlSettings']['max_grad_norm'],
-               vf_coef=train_config['RlSettings']['vf_coef'],
+               learning_rate=float(train_config['RlSettings']['learning_rate']),
+               batch_size=int(train_config['RlSettings']['batch_size']),
+               gamma=float(train_config['RlSettings']['gamma']),
+               ent_coef=float(train_config['RlSettings']['ent_coef']),
+               clip_range=float(train_config['RlSettings']['clip_range']),
+               n_epochs=int(train_config['RlSettings']['n_epochs']),
+               gae_lambda=float(train_config['RlSettings']['gae_lambda']),
+               max_grad_norm=float(train_config['RlSettings']['max_grad_norm']),
+               vf_coef=float(train_config['RlSettings']['vf_coef']),
                net_arch=train_config['RlSettings']['net_arch'],
                activation_fn=train_config['RlSettings']['activation_fn'],
-               ae_path=train_config['CarSettings']['ae_path']):
+               ae_path=train_config['RlSettings']['ae_path']):
 
         env = gym.make(self.envName, conf=self.conf)
         if ae_path is not None:
