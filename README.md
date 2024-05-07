@@ -1,7 +1,18 @@
 # Federated Reinforcement Learning on Donkey Car Gym
 
 ## Requirement
-
+- Download simulator binaries: https://github.com/tawnkramer/gym-donkeycar/releases
+#### Poetry install (Recommend)
+- Install Poetry following the official docs: https://python-poetry.org/docs/#installation
+- Go to the project folder
+``` shell
+cd frl_donkey
+```
+- Install the indenpandencies to virtual environment
+``` shell
+poetry install
+```
+#### Manuel install
 - Install Flower federated learning:
 ``` shell
 pip install flwr-nightly
@@ -11,7 +22,6 @@ pip install flwr-nightly
 pip install stable-baselines3[extra]
 ```
 
-- Download simulator binaries: https://github.com/tawnkramer/gym-donkeycar/releases
 - Install master version of gym donkey car:
 ``` shell
 pip install git+https://github.com/arthur-chen0/gym-donkeycar.git
