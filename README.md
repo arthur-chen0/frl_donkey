@@ -40,14 +40,9 @@ pip install git+https://github.com/arthur-chen0/gym-donkeycar.git
 python frl_server.py
 ```
 
-- Start the client with id, number of clients at least 2
+- Start the client with ID, number of clients at least 2
 
 ``` shell
 python frl_client.py --id 1
 ```
 
-- If you want to train the client with different environments, you could set the env number specify for each client
-
-``` shell
-python frl_client.py --id 1 --env 1
-```
