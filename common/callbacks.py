@@ -1,5 +1,4 @@
 from typing import Optional
-from abc import ABC, abstractmethod
 
 import optuna
 from stable_baselines3.common.callbacks import EvalCallback

@@ -47,7 +47,7 @@ def create_env(is_eval=False):
 
 def objective(trial:optuna.Trial):
 
-    log_path = "./reinforcement/ppo_donkey_6/"
+    log_path = "./reinforcement/ppo_donkey_6/" # TODO: auto create the log path
     n_timesteps = 100000
     n_evaluations = 20
 

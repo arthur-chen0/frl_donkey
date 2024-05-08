@@ -55,9 +55,9 @@ class DonkeyModel:
 
         self.envName = env_list[int(env_num)]
         # logdir += time + "_" + rlAlgo + "_" + dp + aggregationFn + "_" + policy + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_"  + str(carID)
-        logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_" + str(carID)
+        self.logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_" + str(carID)
 
-        self.logdir = logdir
+        # self.logdir = logdir
         self.conf = {
             "exe_path": exe_path,
             "host": train_config['CarSettings']['host'],
