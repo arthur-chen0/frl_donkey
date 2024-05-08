@@ -42,7 +42,7 @@ def create_strategy() -> fl.server.strategy:
     elif "FedYogi" in strategy_name:
         print("Server Strategy: FedYogi")
 
-        model, env = DonkeyModel(argEnvNum=0).create()
+        model, env = DonkeyModel().create()
 
         strategy = fl.server.strategy.FedYogi(
             fraction_fit=fraction_fit,
@@ -58,7 +58,7 @@ def create_strategy() -> fl.server.strategy:
 
     elif "FedAdam" in strategy_name:
         print("Server Strategy: FedAdam")
-        model, env = DonkeyModel(argEnvNum=0).create()
+        model, env = DonkeyModel().create()
 
         strategy = fl.server.strategy.FedAdam(
             fraction_fit=fraction_fit,
@@ -74,7 +74,7 @@ def create_strategy() -> fl.server.strategy:
 
     elif "FedAdagrad" in strategy_name:
         print("Server Strategy: FedAdagrad")
-        model, env = DonkeyModel(argEnvNum=0).create()
+        model, env = DonkeyModel().create()
         strategy = fl.server.strategy.FedAdagrad(
             fraction_fit=fraction_fit,
             fraction_evaluate=fraction_evaluate,

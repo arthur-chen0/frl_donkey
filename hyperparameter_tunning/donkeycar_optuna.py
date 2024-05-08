@@ -39,8 +39,8 @@ def create_env(is_eval=False):
     }
 
     env = gym.make("donkey-minimonaco-track-v0", conf=conf)
-    # env = HistoryWrapper(env, 2)
     env = AutoencoderWrapper(env)
+    env = HistoryWrapper(env, 2)
 
     return env
     # return make_vec_env("donkey-minimonaco-track-v0", env_kwargs=conf)
