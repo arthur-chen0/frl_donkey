@@ -8,6 +8,7 @@ import re
 
 from torch import nn
 from stable_baselines3 import PPO
+from stable_baselines3.common.logger import configure
 from sb3_contrib import TQC
 from common.wrappers import AutoencoderWrapper, HistoryWrapper
 
@@ -91,6 +92,7 @@ class DonkeyModel:
 
         env = gym.make(self.envName, conf=self.conf)
         if ae_path is not None:
+            print("Use ae " + ae_path)
             env = AutoencoderWrapper(env, ae_path)
             env = HistoryWrapper(env, 5)
         env.viewer.handler.send_load_scene(self.envName)
@@ -140,7 +142,7 @@ class DonkeyModel:
             print("RL algorithm: TQC")
             model = TQC(policy,
                         env,
-                        verbose=1,
+                        verbose=0,
                         device='auto',
                         tensorboard_log=self.logdir,
                         tau=0.02,
@@ -157,4 +159,7 @@ class DonkeyModel:
                         policy_kwargs=dict(log_std_init=-3,
                                            net_arch=[256, 256],
                                            n_critics=2))
+            
+        logger = configure(self.logdir, ["csv", "tensorboard", "log"])
+        model.set_logger(logger=logger)
         return model, env
