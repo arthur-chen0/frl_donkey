@@ -4,6 +4,7 @@ import torch
 import configparser, argparse
 
 from common.model import DonkeyModel
+from common.plot import visualize
 
 from collections import OrderedDict
 from typing import List, Tuple, Union
@@ -47,13 +48,14 @@ class FlowerClient(fl.client.NumPyClient):
         print("start evalution after training...")
         mean_reward, std_reward = self.evaluate_policy(eval_episodes_n=3,
                                                        n_step=3000)
-        self.model.logger.record("eval/mean_reward", mean_reward)
-        self.model.logger.dump(step=self.model.num_timesteps)
+        # self.model.logger.record("eval/mean_reward", mean_reward)
+        # self.model.logger.dump(step=self.model.num_timesteps)
 
         print("done training... mean reward: ", mean_reward, "std: ",
               std_reward)
 
-        self.model.save(self.donkeyModel.logdir + "_ppo_donkey")
+        self.model.save(self.donkeyModel.logdir + "/client_" + args.id + "/ppo_donkey")
+        visualize(self.donkeyModel.logdir)
 
         return self.get_parameters(config={}), int(
             train_config['RlSettings']['timesteps']), {}
@@ -101,3 +103,4 @@ fl.client.start_client(
 )
 
 client.numpy_client.env.close()
+visualize(client.numpy_client.donkeyModel.logdir)

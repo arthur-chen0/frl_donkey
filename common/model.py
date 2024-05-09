@@ -8,6 +8,7 @@ import re
 
 from torch import nn
 from stable_baselines3 import PPO
+from stable_baselines3.common.logger import configure
 from sb3_contrib import TQC
 from common.wrappers import AutoencoderWrapper, HistoryWrapper
 
@@ -51,12 +52,12 @@ class DonkeyModel:
         # if argEnvNum is not None:
         #     print("arg is not none, env: ", argEnvNum)
         #     env_num = str(argEnvNum)
-
+        self.carID = carID
         self.envName = env_list[int(env_num)]
         # logdir += time + "_" + rlAlgo + "_" + dp + aggregationFn + "_" + policy + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_"  + str(carID)
-        logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_" + str(carID)
+        self.logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval"
 
-        self.logdir = logdir
+        # self.logdir = logdir
         self.conf = {
             "exe_path": exe_path,
             "host": train_config['CarSettings']['host'],
@@ -75,6 +76,7 @@ class DonkeyModel:
         }
 
     def create(self,
+               isLog=True,
                policy=train_config['RlSettings']['policy'],
                learning_rate=float(train_config['RlSettings']['learning_rate']),
                batch_size=int(train_config['RlSettings']['batch_size']),
@@ -88,9 +90,12 @@ class DonkeyModel:
                net_arch=train_config['RlSettings']['net_arch'],
                activation_fn=train_config['RlSettings']['activation_fn'],
                ae_path=train_config['RlSettings']['ae_path']):
+        
+        logdir = self.logdir + "/client_" + str(self.carID) if isLog else None
 
         env = gym.make(self.envName, conf=self.conf)
         if ae_path is not None:
+            print("Use ae " + ae_path)
             env = AutoencoderWrapper(env, ae_path)
             env = HistoryWrapper(env, 5)
         env.viewer.handler.send_load_scene(self.envName)
@@ -121,7 +126,7 @@ class DonkeyModel:
                         env,
                         verbose=0,
                         device="auto",
-                        tensorboard_log=self.logdir,
+                        tensorboard_log=logdir,
                         n_steps=256,
                         learning_rate=learning_rate,
                         batch_size=batch_size,
@@ -140,9 +145,9 @@ class DonkeyModel:
             print("RL algorithm: TQC")
             model = TQC(policy,
                         env,
-                        verbose=1,
+                        verbose=0,
                         device='auto',
-                        tensorboard_log=self.logdir,
+                        tensorboard_log=logdir,
                         tau=0.02,
                         batch_size=256,
                         gradient_steps=256,
@@ -157,4 +162,7 @@ class DonkeyModel:
                         policy_kwargs=dict(log_std_init=-3,
                                            net_arch=[256, 256],
                                            n_critics=2))
+        if isLog:  
+            logger = configure(logdir, ["csv", "tensorboard", "log"])
+            model.set_logger(logger=logger)
         return model, env

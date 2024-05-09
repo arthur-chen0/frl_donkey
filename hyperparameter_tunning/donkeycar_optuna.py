@@ -39,15 +39,15 @@ def create_env(is_eval=False):
     }
 
     env = gym.make("donkey-minimonaco-track-v0", conf=conf)
-    # env = HistoryWrapper(env, 2)
     env = AutoencoderWrapper(env)
+    env = HistoryWrapper(env, 2)
 
     return env
     # return make_vec_env("donkey-minimonaco-track-v0", env_kwargs=conf)
 
 def objective(trial:optuna.Trial):
 
-    log_path = "./reinforcement/ppo_donkey_6/"
+    log_path = "./reinforcement/ppo_donkey_6/" # TODO: auto create the log path
     n_timesteps = 100000
     n_evaluations = 20
 
