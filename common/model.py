@@ -76,6 +76,7 @@ class DonkeyModel:
         }
 
     def create(self,
+               isLog=True,
                policy=train_config['RlSettings']['policy'],
                learning_rate=float(train_config['RlSettings']['learning_rate']),
                batch_size=int(train_config['RlSettings']['batch_size']),
@@ -90,7 +91,7 @@ class DonkeyModel:
                activation_fn=train_config['RlSettings']['activation_fn'],
                ae_path=train_config['RlSettings']['ae_path']):
         
-        logdir = self.logdir + "/client_" + str(self.carID)
+        logdir = self.logdir + "/client_" + str(self.carID) if isLog else None
 
         env = gym.make(self.envName, conf=self.conf)
         if ae_path is not None:
@@ -161,7 +162,7 @@ class DonkeyModel:
                         policy_kwargs=dict(log_std_init=-3,
                                            net_arch=[256, 256],
                                            n_critics=2))
-            
-        logger = configure(logdir, ["csv", "tensorboard", "log"])
-        model.set_logger(logger=logger)
+        if isLog:  
+            logger = configure(logdir, ["csv", "tensorboard", "log"])
+            model.set_logger(logger=logger)
         return model, env
