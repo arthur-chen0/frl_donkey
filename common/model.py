@@ -52,10 +52,10 @@ class DonkeyModel:
         # if argEnvNum is not None:
         #     print("arg is not none, env: ", argEnvNum)
         #     env_num = str(argEnvNum)
-
+        self.carID = carID
         self.envName = env_list[int(env_num)]
         # logdir += time + "_" + rlAlgo + "_" + dp + aggregationFn + "_" + policy + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_"  + str(carID)
-        self.logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_" + str(carID)
+        self.logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval"
 
         # self.logdir = logdir
         self.conf = {
@@ -89,6 +89,8 @@ class DonkeyModel:
                net_arch=train_config['RlSettings']['net_arch'],
                activation_fn=train_config['RlSettings']['activation_fn'],
                ae_path=train_config['RlSettings']['ae_path']):
+        
+        logdir = self.logdir + "/client_" + str(self.carID)
 
         env = gym.make(self.envName, conf=self.conf)
         if ae_path is not None:
@@ -123,7 +125,7 @@ class DonkeyModel:
                         env,
                         verbose=0,
                         device="auto",
-                        tensorboard_log=self.logdir,
+                        tensorboard_log=logdir,
                         n_steps=256,
                         learning_rate=learning_rate,
                         batch_size=batch_size,
@@ -144,7 +146,7 @@ class DonkeyModel:
                         env,
                         verbose=0,
                         device='auto',
-                        tensorboard_log=self.logdir,
+                        tensorboard_log=logdir,
                         tau=0.02,
                         batch_size=256,
                         gradient_steps=256,
@@ -160,6 +162,6 @@ class DonkeyModel:
                                            net_arch=[256, 256],
                                            n_critics=2))
             
-        logger = configure(self.logdir, ["csv", "tensorboard", "log"])
+        logger = configure(logdir, ["csv", "tensorboard", "log"])
         model.set_logger(logger=logger)
         return model, env
