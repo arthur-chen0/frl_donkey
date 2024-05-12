@@ -1,8 +1,9 @@
 from typing import Optional
 
 import optuna
-from stable_baselines3.common.callbacks import EvalCallback
+from stable_baselines3.common.callbacks import BaseCallback, EvalCallback
 from stable_baselines3.common.vec_env import VecEnv
+from common.plot import visualize
 
 
 class TrailEvalCallback(EvalCallback):
@@ -42,3 +43,18 @@ class TrailEvalCallback(EvalCallback):
                 self.is_pruned = True
                 return False
         return True
+    
+class PlotCallback(BaseCallback):
+    
+    def __init__(self, verbose: int = 0, logdir: str = None):
+        self.logdir = logdir
+        super().__init__(verbose)
+
+    def _on_step(self) -> bool:
+        return super()._on_step()
+
+    def _on_rollout_end(self) -> None:
+        if self.num_timesteps % 2560 == 0:
+            visualize(self.logdir)
+            
+        return super()._on_rollout_end()

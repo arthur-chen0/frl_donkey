@@ -25,8 +25,9 @@ def plot_reward_fig(plot_list: dict, logdir: str):
     ax = plt.gca()
     ax.xaxis.set_major_locator(plt.MultipleLocator(30000))
     # plt.grid(axis="x")
-    plt.savefig(os.path.join(logdir, "reward.png"))
-    plt.show
+    plt.savefig(os.path.join(logdir, logdir.split("/")[2] + "_reward.png"))
+    # plt.show
+    plt.close()
     
 def plot_length_fig(plot_list: dict, logdir: str):
     plt.style.use("seaborn-v0_8-deep")
@@ -41,8 +42,9 @@ def plot_length_fig(plot_list: dict, logdir: str):
     ax = plt.gca()
     ax.xaxis.set_major_locator(plt.MultipleLocator(30000))
     # plt.grid(axis="x")
-    plt.savefig(os.path.join(logdir, "length.png"))
-    plt.show
+    plt.savefig(os.path.join(logdir, logdir.split("/")[2] + "_length.png"))
+    # plt.show
+    plt.close()
     
     
 def visualize(logdir: str):
@@ -64,7 +66,4 @@ def visualize(logdir: str):
     plot_reward_fig(plot_list, logdir)
     plot_length_fig(plot_list, logdir)
                          
-
-# if __name__ == "__main__":
-#     visualize("record/PPO/dp_adaptive_clipping_FedAvg/2024-05-07/22_50_env2_r30000_f10_noeval")
 

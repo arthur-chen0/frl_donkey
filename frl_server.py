@@ -90,21 +90,38 @@ def create_strategy() -> fl.server.strategy:
     if dp is not None:
 
         if "dp_fixed_clipping" in dp:
-            print("Server Strategy with defferential privacy: fixed clipping")
-            return fl.server.strategy.DifferentialPrivacyServerSideFixedClipping(
-                strategy,
-                num_sampled_clients=clients,
-                clipping_norm=clip_norm,
-                noise_multiplier=noise_multiplier
-            )
+            if "server" in dp:
+                print("Server Strategy with defferential privacy: server fixed clipping")
+                return fl.server.strategy.DifferentialPrivacyServerSideFixedClipping(
+                    strategy,
+                    num_sampled_clients=clients,
+                    clipping_norm=clip_norm,
+                    noise_multiplier=noise_multiplier
+                )
+            elif "client" in dp:
+                print("Server Strategy with defferential privacy: client fixed clipping")
+                return fl.server.strategy.DifferentialPrivacyClientSideFixedClipping(
+                    strategy,
+                    num_sampled_clients=clients,
+                    clipping_norm=clip_norm,
+                    noise_multiplier=noise_multiplier
+                )
 
         elif "dp_adaptive_clipping" in dp:
-            print("Server Strategy with defferential privacy: adaptive clipping")
-            return fl.server.strategy.DifferentialPrivacyServerSideAdaptiveClipping(
-                strategy,
-                num_sampled_clients=clients,
-                noise_multiplier=noise_multiplier,
-            )
+            if "server" in dp:
+                print("Server Strategy with defferential privacy: server adaptive clipping")
+                return fl.server.strategy.DifferentialPrivacyServerSideAdaptiveClipping(
+                    strategy,
+                    num_sampled_clients=clients,
+                    noise_multiplier=noise_multiplier,
+                )
+            elif "client" in dp:
+                print("Server Strategy with defferential privacy: client adaptive clipping")
+                return fl.server.strategy.DifferentialPrivacyClientSideAdaptiveClipping(
+                    strategy,
+                    num_sampled_clients=clients,
+                    noise_multiplier=noise_multiplier,
+                )
     else:
         return strategy
 
