@@ -4,6 +4,7 @@ import torch
 import configparser, argparse
 
 from common.model import DonkeyModel
+from common.callbacks import PlotCallback
 from common.plot import visualize
 
 from collections import OrderedDict
@@ -39,9 +40,10 @@ class FlowerClient(fl.client.NumPyClient):
         # print("parameters: ", parameters[0])
         self.set_parameters(parameters)
 
+        plotCallback = PlotCallback(logdir=self.donkeyModel.logdir)
         # set up model in learning mode with goal number of timesteps to complete
         timesteps = int(train_config['RlSettings']['timesteps'])
-        self.model.learn(total_timesteps=timesteps, reset_num_timesteps=False)
+        self.model.learn(total_timesteps=timesteps, reset_num_timesteps=False, callback=plotCallback)
 
         self.obs = self.env.reset()
 
@@ -55,7 +57,6 @@ class FlowerClient(fl.client.NumPyClient):
               std_reward)
 
         self.model.save(self.donkeyModel.logdir + "/client_" + args.id + "/ppo_donkey")
-        visualize(self.donkeyModel.logdir)
 
         return self.get_parameters(config={}), int(
             train_config['RlSettings']['timesteps']), {}

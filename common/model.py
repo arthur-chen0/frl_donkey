@@ -97,7 +97,7 @@ class DonkeyModel:
         if ae_path is not None:
             print("Use ae " + ae_path)
             env = AutoencoderWrapper(env, ae_path)
-            env = HistoryWrapper(env, 5)
+            env = HistoryWrapper(env, 2)
         env.viewer.handler.send_load_scene(self.envName)
 
         net_arch = {
@@ -165,4 +165,8 @@ class DonkeyModel:
         if isLog:  
             logger = configure(logdir, ["csv", "tensorboard", "log"])
             model.set_logger(logger=logger)
+
+        with open(self.logdir + "/config.ini", "w") as configfile:
+            train_config.write(configfile)
+            
         return model, env
