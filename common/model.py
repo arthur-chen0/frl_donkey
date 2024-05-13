@@ -166,7 +166,7 @@ class DonkeyModel:
             logger = configure(logdir, ["csv", "tensorboard", "log"])
             model.set_logger(logger=logger)
 
-        with open(self.logdir + "/config.ini", "w") as configfile:
-            train_config.write(configfile)
-            
+            with open(self.logdir + "/config.ini", "w") as configfile:
+                train_config.write(configfile)
+
         return model, env
