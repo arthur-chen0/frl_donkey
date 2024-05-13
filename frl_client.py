@@ -9,6 +9,7 @@ from common.plot import visualize
 
 from collections import OrderedDict
 from typing import List, Tuple, Union
+from loguru import logger
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--id", help="Client id")
@@ -36,7 +37,6 @@ class FlowerClient(fl.client.NumPyClient):
         self.model.policy.load_state_dict(state_dict, strict=True)
 
     def fit(self, parameters, config):
-        print("start training...")
         # print("parameters: ", parameters[0])
         self.set_parameters(parameters)
 
@@ -47,14 +47,14 @@ class FlowerClient(fl.client.NumPyClient):
 
         self.obs = self.env.reset()
 
-        print("start evalution after training...")
-        mean_reward, std_reward = self.evaluate_policy(eval_episodes_n=3,
-                                                       n_step=3000)
+
+        # mean_reward, std_reward = self.evaluate_policy(eval_episodes_n=3,
+        #                                                n_step=3000)
         # self.model.logger.record("eval/mean_reward", mean_reward)
         # self.model.logger.dump(step=self.model.num_timesteps)
 
-        print("done training... mean reward: ", mean_reward, "std: ",
-              std_reward)
+        # print("done training... mean reward: ", mean_reward, "std: ",
+        #       std_reward)
 
         self.model.save(self.donkeyModel.logdir + "/client_" + args.id + "/ppo_donkey")
 
@@ -89,7 +89,7 @@ class FlowerClient(fl.client.NumPyClient):
         if not done:
             obs = self.env.reset()
             episode_rewards.append(curr_ep_reward)
-        print("episode rewards ", episode_rewards)
+        # print("episode rewards ", episode_rewards)
         mean_reward = np.mean(episode_rewards)
         std_reward = np.std(episode_rewards)
         return mean_reward, std_reward

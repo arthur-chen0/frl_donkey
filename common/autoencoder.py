@@ -271,6 +271,6 @@ def load_ae(
         autoencoder = Autoencoder(z_size=1)
     else:
         autoencoder = Autoencoder.load(path)
-    print(f"Dim AE = {autoencoder.z_size}")
-    print("PyTorch", th.__version__)
+    # print(f"Dim AE = {autoencoder.z_size}")
+    # print("PyTorch", th.__version__)
     return autoencoder

@@ -10,6 +10,7 @@ from torch import nn
 from stable_baselines3 import PPO
 from stable_baselines3.common.logger import configure
 from sb3_contrib import TQC
+from loguru import logger
 from common.wrappers import AutoencoderWrapper, HistoryWrapper
 
 train_config = configparser.ConfigParser(allow_no_value=True)
@@ -95,7 +96,7 @@ class DonkeyModel:
 
         env = gym.make(self.envName, conf=self.conf)
         if ae_path is not None:
-            print("Use ae " + ae_path)
+            logger.info("Use ae " + ae_path)
             env = AutoencoderWrapper(env, ae_path)
             env = HistoryWrapper(env, 2)
         env.viewer.handler.send_load_scene(self.envName)
@@ -121,7 +122,7 @@ class DonkeyModel:
             policy = "MlpPolicy"
 
         if "PPO" in train_config["RlSettings"]["rlAlgo"]:
-            print("RL algorithm: PPO")
+            logger.info("RL algorithm: PPO")
             model = PPO(policy,
                         env,
                         verbose=0,
@@ -142,7 +143,7 @@ class DonkeyModel:
                                            ortho_init=False))
 
         elif "TQC" in train_config["RlSettings"]["rlAlgo"]:
-            print("RL algorithm: TQC")
+            logger.info("RL algorithm: TQC")
             model = TQC(policy,
                         env,
                         verbose=0,
@@ -163,8 +164,8 @@ class DonkeyModel:
                                            net_arch=[256, 256],
                                            n_critics=2))
         if isLog:  
-            logger = configure(logdir, ["csv", "tensorboard", "log"])
-            model.set_logger(logger=logger)
+            sb_logger = configure(logdir, ["csv", "tensorboard", "log"])
+            model.set_logger(logger=sb_logger)
 
             with open(self.logdir + "/config.ini", "w") as configfile:
                 train_config.write(configfile)

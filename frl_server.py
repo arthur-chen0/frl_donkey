@@ -1,6 +1,8 @@
 import flwr as fl
 import configparser
+import re
 
+from loguru import logger
 from common.model import DonkeyModel
 from flwr.common import ndarrays_to_parameters
 
@@ -20,8 +22,8 @@ def create_strategy() -> fl.server.strategy:
 
     strategy = None
 
-    if "FedAvg" in strategy_name:
-        print("Server Strategy: FedAvg")
+    if re.search("FedAvg", strategy_name, re.IGNORECASE):
+        logger.info("Server Strategy: FedAvg")
         strategy = fl.server.strategy.FedAvg(
             fraction_fit=fraction_fit,
             fraction_evaluate=fraction_evaluate,
@@ -29,8 +31,8 @@ def create_strategy() -> fl.server.strategy:
             min_evaluate_clients=clients,
             min_available_clients=clients)
 
-    elif "FedProx" in strategy_name:
-        print("Server Strategy: FedProx")
+    elif re.search("FedProx", strategy_name, re.IGNORECASE):
+        logger.info("Server Strategy: FedProx")
         strategy = fl.server.strategy.FedProx(
             fraction_fit=fraction_fit,
             fraction_evaluate=fraction_evaluate,
@@ -39,8 +41,8 @@ def create_strategy() -> fl.server.strategy:
             min_evaluate_clients=clients,
             min_available_clients=clients)
 
-    elif "FedYogi" in strategy_name:
-        print("Server Strategy: FedYogi")
+    elif re.search("FedYogi", strategy_name, re.IGNORECASE):
+        logger.info("Server Strategy: FedYogi")
 
         model, env = DonkeyModel().create(isLog=False)
 
@@ -56,8 +58,8 @@ def create_strategy() -> fl.server.strategy:
             ]))
         env.close()
 
-    elif "FedAdam" in strategy_name:
-        print("Server Strategy: FedAdam")
+    elif re.search("FedAdam", strategy_name, re.IGNORECASE):
+        logger.info("Server Strategy: FedAdam")
         model, env = DonkeyModel().create(isLog=False)
 
         strategy = fl.server.strategy.FedAdam(
@@ -72,8 +74,8 @@ def create_strategy() -> fl.server.strategy:
             ]))
         env.close()
 
-    elif "FedAdagrad" in strategy_name:
-        print("Server Strategy: FedAdagrad")
+    elif re.search("FedAdagrad", strategy_name, re.IGNORECASE):
+        logger.info("Server Strategy: FedAdagrad")
         model, env = DonkeyModel().create(isLog=False)
         strategy = fl.server.strategy.FedAdagrad(
             fraction_fit=fraction_fit,
@@ -89,17 +91,17 @@ def create_strategy() -> fl.server.strategy:
 
     if dp is not None:
 
-        if "dp_fixed_clipping" in dp:
-            if "server" in dp:
-                print("Server Strategy with defferential privacy: server fixed clipping")
+        if re.search("dp_fixed_clipping", dp, re.IGNORECASE):
+            if re.search("server", dp, re.IGNORECASE):
+                logger.info("Server Strategy with defferential privacy: server fixed clipping")
                 return fl.server.strategy.DifferentialPrivacyServerSideFixedClipping(
                     strategy,
                     num_sampled_clients=clients,
                     clipping_norm=clip_norm,
                     noise_multiplier=noise_multiplier
                 )
-            elif "client" in dp:
-                print("Server Strategy with defferential privacy: client fixed clipping")
+            elif re.search("client", dp, re.IGNORECASE):
+                logger.info("Server Strategy with defferential privacy: client fixed clipping")
                 return fl.server.strategy.DifferentialPrivacyClientSideFixedClipping(
                     strategy,
                     num_sampled_clients=clients,
@@ -107,23 +109,22 @@ def create_strategy() -> fl.server.strategy:
                     noise_multiplier=noise_multiplier
                 )
 
-        elif "dp_adaptive_clipping" in dp:
-            if "server" in dp:
-                print("Server Strategy with defferential privacy: server adaptive clipping")
+        elif re.search("dp_adaptive_clipping", dp, re.IGNORECASE):
+            if re.search("server", dp, re.IGNORECASE):
+                logger.info("Server Strategy with defferential privacy: server adaptive clipping")
                 return fl.server.strategy.DifferentialPrivacyServerSideAdaptiveClipping(
                     strategy,
                     num_sampled_clients=clients,
                     noise_multiplier=noise_multiplier,
                 )
-            elif "client" in dp:
-                print("Server Strategy with defferential privacy: client adaptive clipping")
+            elif re.search("client", dp, re.IGNORECASE):
+                logger.info("Server Strategy with defferential privacy: client adaptive clipping")
                 return fl.server.strategy.DifferentialPrivacyClientSideAdaptiveClipping(
                     strategy,
                     num_sampled_clients=clients,
                     noise_multiplier=noise_multiplier,
                 )
-    else:
-        return strategy
+    return strategy
 
 
 def main() -> None:
