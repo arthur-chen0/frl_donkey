@@ -13,6 +13,7 @@ sb3-contrib = "^2.2.1"
 flwr-nightly = "^1.8.0.dev20240315"
 gym-donkeycar = {git = "https://github.com/arthur-chen0/gym-donkeycar.git"}
 optuna = "^3.6.1"
+loguru = "^0.7.2"
 
 
 [build-system]
