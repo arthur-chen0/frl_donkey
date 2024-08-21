@@ -31,7 +31,7 @@ elif platform.system() == "Linux":
 
 class DonkeyModel:
 
-    def __init__(self, carID=0):
+    def __init__(self, carID=0, argEnvNum=None):
 
         rlAlgo = train_config['RlSettings']['rlAlgo']
         aggregationFn = train_config['FlSettings']['aggregationFn']
@@ -50,13 +50,15 @@ class DonkeyModel:
 
         # logdir = "record/" + date + "/"
 
-        # if argEnvNum is not None:
-        #     print("arg is not none, env: ", argEnvNum)
-        #     env_num = str(argEnvNum)
+        if argEnvNum is not None:
+            print("arg is not none, env: ", argEnvNum)
+            env_num = str(argEnvNum)
+            train_config["RlSettings"]["env"] = env_num
+            
         self.carID = carID
         self.envName = env_list[int(env_num)]
         # logdir += time + "_" + rlAlgo + "_" + dp + aggregationFn + "_" + policy + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval" + "/client_"  + str(carID)
-        self.logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_env" + env_num + "_r" + timesteps + "_f" + rounds + "_noeval"
+        self.logdir = "record/" + rlAlgo + "/" + dp + "_" + aggregationFn + "/" + date + "/" + time + "_r" + timesteps + "_f" + rounds + "_noeval"
 
         # self.logdir = logdir
         self.conf = {
@@ -167,7 +169,7 @@ class DonkeyModel:
             sb_logger = configure(logdir, ["csv", "tensorboard", "log"])
             model.set_logger(logger=sb_logger)
 
-            with open(self.logdir + "/config.ini", "w") as configfile:
+            with open(self.logdir + "/client_" + str(self.carID) + "/config.ini", "w") as configfile:
                 train_config.write(configfile)
 
         return model, env
