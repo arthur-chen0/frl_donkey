@@ -13,6 +13,7 @@ from loguru import logger
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--id", help="Client id")
+parser.add_argument("--env", help="Environment num", default=None)
 args = parser.parse_args()
 
 train_config = configparser.ConfigParser(allow_no_value=True)
@@ -22,8 +23,9 @@ train_config.read('config.ini')
 class FlowerClient(fl.client.NumPyClient):
 
     def __init__(self):
-        self.donkeyModel = DonkeyModel(carID=int(args.id))
+        self.donkeyModel = DonkeyModel(carID=int(args.id), argEnvNum=args.env)
         self.model, self.env = self.donkeyModel.create()
+        self.count = 0
 
     def get_parameters(self, config):
         return [
@@ -62,6 +64,9 @@ class FlowerClient(fl.client.NumPyClient):
             train_config['RlSettings']['timesteps']), {}
 
     def evaluate(self, parameters, config):
+        self.count += 1
+        self.set_parameters(parameters)
+        self.model.save(self.donkeyModel.logdir + "/aggregrated_model/ppo_donkey_aggregated_" + str(self.count))
         return 0.0, 1000, {"rewards": 0.0}
 
     def evaluate_policy(
